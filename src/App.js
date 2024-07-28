@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import LayoutApp from "./ui/layout";
+import { BreadcrumbProvider } from './ui/context/Breadcrumb';
+import Dashboard from './ui/pages/Dashboard';
+import Executions from './ui/pages/Executions';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#4319b0",
+          colorBgBase: "#ebe7e4",
+          colorLink: "#4319b0",
+        }
+      }}
+    >
+      <BreadcrumbProvider>
+        <BrowserRouter>
+          <LayoutApp>
+            <Routes>
+              <Route path="/" element={<Dashboard/>}/>
+              <Route path="/executions" element={<Executions/>}/>
+            </Routes>
+          </LayoutApp>
+        </BrowserRouter>
+      </BreadcrumbProvider>
+    </ConfigProvider>
   );
-}
-
+};
 export default App;
