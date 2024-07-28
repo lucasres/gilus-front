@@ -24,17 +24,27 @@ const Dashboard = () => {
     }, [])
 
     useEffect(() => {
-        const name = cronName.replaceAll(" ", "-") ?? ""
+        const name = cronName?.replaceAll(" ", "-") ?? ""
 
         if (stack === "shell") {
             setExampleCode(`curl -X POST -d '{"name": "${name}"}' https://gilus.api/crons`)
-        } else {
+        } else if (stack === "python") {
             setExampleCode(`import requests\n
             \n
             response = requests.post(\n
                 \t'https://gilus.api/crons',\n
                 \tjson={"name": "${name}"}\n
             )`)
+        } else if (stack === "php") {
+            setExampleCode(`<?php\n
+            \n
+            $ch = curl_init();\n
+            \n
+            curl_setopt($ch, CURLOPT_URL, "https://gilus.api/crons");\n
+            curl_setopt($ch, CURLOPT_POST, 1);\n
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));\n
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(['name' => "${name}"]));\n
+            $response = curl_exec($ch);\n`)
         }
     }, [stack, cronName])
 
@@ -42,7 +52,7 @@ const Dashboard = () => {
         <>
             <Title level={4}>👋 Olá, Bem vindo ao Gilus</Title>
             <Content
-                style={{margin: "1rem", justifyContent: "center", display: "flex"}}
+                style={{margin: "1rem", justifyContent: "center", display: "flex", height: 450}}
             >
                 <div
                     style={{
@@ -88,6 +98,7 @@ const Dashboard = () => {
                             <Select 
                                 options={[
                                     { label: "Shell", value: "shell" },
+                                    { label: "PHP", value: "php" },
                                     { label: "Python", value: "python" },
                                 ]}
                                 style={{ width: "100%" }}
@@ -105,7 +116,7 @@ const Dashboard = () => {
                         >
                             {exampleCode.split("\n").map((l) => (
                                 <>
-                                    <p>{l.replace("\t", "    ")}</p>
+                                    <p>{l}</p>
                                 </>
                             ))}
                         </div>

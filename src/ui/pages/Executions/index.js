@@ -3,6 +3,7 @@ import { BreadcrumbContext } from "../../context/Breadcrumb"
 import useTitle from "../../../hooks/useTitle"
 import { Button, Table, Typography, Layout } from "antd"
 import { EyeOutlined } from '@ant-design/icons';
+import { Link } from "react-router-dom";
 
 const { Title } = Typography
 const { Content } = Layout
@@ -35,7 +36,9 @@ const Executions = () => {
             dataIndex: "id",
             width: "15%",
             render: (id) => (
-                <Button type="link"><EyeOutlined /> Visualizar execuções</Button>
+                <Link to={`/executions/${id}`}>
+                    <Button type="link"><EyeOutlined /> Visualizar execuções</Button>
+                </Link>
             )
         },
     ]
