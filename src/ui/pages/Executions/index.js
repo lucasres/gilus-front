@@ -24,10 +24,10 @@ const columns = [
     },
     {
         title: "Ações",
-        dataIndex: "id",
+        dataIndex: "name",
         width: "15%",
-        render: (id) => (
-            <Link to={`/executions/${id}`}>
+        render: (name) => (
+            <Link to={`/executions/${name}`}>
                 <Button type="link"><EyeOutlined />Visualizar execuções</Button>
             </Link>
         )

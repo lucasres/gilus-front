@@ -1,25 +1,21 @@
 import { Line } from "@ant-design/plots";
-import { Typography, Layout } from "antd";
+import { Typography, Layout, Skeleton, message } from "antd";
 import useTitle from "../../../hooks/useTitle";
 import { useParams } from "react-router-dom";
+import ExecutionService from "../../../services/Execution";
+import { useEffect, useState } from "react";
 
 const { Title } = Typography
 const { Content } = Layout
 
+const service = new ExecutionService()
+
 const Visualization = () => {
     const { name } = useParams()
     useTitle(`Visualização - ${name}`)
+    const [data, setData] = useState({})
+    const [loading, setLoading] = useState(true)
 
-    const data = [
-        { pingAt: '16:53 28/07/2024', value: 1 },
-        { pingAt: '16:54 28/07/2024', value: 1 },
-        { pingAt: '16:55 28/07/2024', value: 0 },
-        { pingAt: '16:56 28/07/2024', value: 0 },
-        { pingAt: '16:57 28/07/2024', value: 0 },
-        { pingAt: '16:58 28/07/2024', value: 1 },
-        { pingAt: '16:59 28/07/2024', value: 1 },
-        { pingAt: '17:00 28/07/2024', value: 1 },
-    ];
     const config = {
         xField: 'pingAt',
         yField: 'value',
@@ -36,6 +32,23 @@ const Visualization = () => {
             lineWidth: 2,
         },
     };
+
+    useEffect(() => {
+        service.getPingsByCron(name)
+            .then((data) => setData(data))
+            .catch(() => message.error(`Erro ao recuperar as execuções da cron ${name}`))
+            .finally(() => setLoading(false))
+    }, [])
+
+    if (loading) {
+        return (
+            <>
+                <Skeleton active />
+                <Skeleton active />
+                <Skeleton active />
+            </>
+        )
+    }
 
     return (
         <>
