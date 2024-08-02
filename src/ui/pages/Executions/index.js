@@ -1,47 +1,54 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { BreadcrumbContext } from "../../context/Breadcrumb"
 import useTitle from "../../../hooks/useTitle"
-import { Button, Table, Typography, Layout } from "antd"
+import { Button, Table, Typography, Layout, message } from "antd"
 import { EyeOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
+import ExecutionService from "../../../services/Execution";
 
 const { Title } = Typography
 const { Content } = Layout
 
+const service = new ExecutionService()
+
+const columns = [
+    { 
+        title: "Nome da cron",
+        dataIndex: "name",
+        width: "65%",
+    },
+    { 
+        title: "Criado em",
+        dataIndex: "createdAt",
+        width: "20%",
+    },
+    {
+        title: "Ações",
+        dataIndex: "id",
+        width: "15%",
+        render: (id) => (
+            <Link to={`/executions/${id}`}>
+                <Button type="link"><EyeOutlined />Visualizar execuções</Button>
+            </Link>
+        )
+    },
+]
+
 const Executions = () => {
     useTitle("Execuções")
     const { setBreadcrumbs, breadcrumbs } = useContext(BreadcrumbContext)
-
+    const [loading, setLoading] = useState(true)
+    const [dataSource, setDataSource] = useState([])
+    
     useEffect(() => {
         setBreadcrumbs([{ title: "Dashboard" }, { title: "Execuções" }])
+        setLoading(true)
+
+        service.getCrons()
+            .then((data) => setDataSource(data))
+            .catch(() => message.error("Erro ao realizar a comunicação com a API"))
+            .finally(() => setLoading(false))
     }, [])
-
-    const dataSource = [
-        {
-            id: "Cron #1",
-        },
-        {
-            id: "teste #2",
-        }
-    ]
-
-    const columns = [
-        { 
-            title: "Nome da cron",
-            dataIndex: "id",
-            width: "85%",
-        },
-        {
-            title: "Ações",
-            dataIndex: "id",
-            width: "15%",
-            render: (id) => (
-                <Link to={`/executions/${id}`}>
-                    <Button type="link"><EyeOutlined /> Visualizar execuções</Button>
-                </Link>
-            )
-        },
-    ]
 
     return (
         <>
@@ -52,6 +59,7 @@ const Executions = () => {
                 <Table
                     dataSource={dataSource}
                     columns={columns}
+                    loading={loading}
                 >
                 </Table>
             </Content>
